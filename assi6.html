@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+    <script>
+        const btn=document.querySelector("#btn");
+let input_text=document.querySelector("#input_text");
+let content=document.querySelector("#content");
+let work=[];
+let count=0;
+let btn1=document.querySelector("#btn1");
+let flag=false;
+function refreshItems()
+{    
+    content.innerHTML="";
+        setTimeout(()=>{
+        work.map((val)=>{
+               
+                flag=true;
+                content.insertAdjacentHTML("afterbegin",`<div class="items" id="${val.id}">
+                <h3>${val.text}</h3>
+               <div class="prop">
+                   <i class="fas fa-sort-up"></i>
+                   <i class="fas fa-sort-down"></i>
+                   <i class="fas fa-check-square"></i>
+                   <i class="fas fa-trash"></i>
+                   <i class="far fa-edit"></i>
+               </div>
+            </div>`);
+               
+        })
+       },1);
+    };
+const addData=()=>{
+    let text=input_text.value.trim();
+  refreshItems();
+   if(text!="")
+   {
+        count++;
+        work.push({text,id:count});
+        
+        count++;
+        input_text.value=""; 
+        input_text.focus();
+    }
+    else{
+        alert("Please enter Something");
+    }
+    
+}
+console.log(content.innerHTML);
+document.addEventListener("keydown",(e)=>{if(e.key==="Enter")
+{
+    addData();
+}});
+btn.addEventListener("click",()=>{
+    addData();
+    btn.style.transition="all 1s ease";
+    if(flag)
+    {
+        btn.innerHTML='<i class="fas fa-check"></i>';
+    function changeIcon(){
+        btn.innerHTML='<i class="far fa-paper-plane"></i>';
+        flag=false;
+    }
+    setTimeout(changeIcon,500);
+    }
+    
+});
+//// delete functionality
+content.addEventListener('click', deleteCheck);
+function  deleteCheck(e){
+const item=e.target;
+if(item.classList[1]==="fa-sort-up")
+{
+    const todo=item.parentElement.parentElement.getAttribute('id');
+    console.log(todo);
+     let index=-1;
+     for(let i=0;i<work.length;i++)
+     {
+         if(work[i].id==todo)
+         {
+             index=i;
+         }
+        
+     }
+     if(index!=work.length-1)
+     {
+        const temp=work[index+1];
+        work[index+1]=work[index];
+        work[index]=temp;
+        
+        refreshItems();
+     }
+     else{
+         alert("chill!!");
+     }
+}
+if(item.classList[1]==="fa-sort-down")
+{
+    const todo=item.parentElement.parentElement.getAttribute('id');
+    console.log(todo);
+     let index=-1;
+     for(let i=0;i<work.length;i++)
+     {
+         if(work[i].id==todo)
+         {
+             index=i;
+         }
+        
+     }
+     if(index!=0)
+     {
+        const temp=work[index-1];
+        work[index-1]=work[index];
+        work[index]=temp;
+        
+        refreshItems();
+     }
+     else
+     {
+         alert("Chill");
+     }
+}
+if(item.classList[1]==="fa-trash")
+{
+    const todo=item.parentElement.parentElement;
+ todo.classList.add("slide-out-elliptic-top-bck");
+todo.addEventListener("animationend",()=>todo.remove());
+const newArray=work.filter(({id})=>id!=todo.getAttribute("id"));
+work=newArray;
+
+}
+if(item.classList[1]==="fa-check-square")
+{
+    item.parentElement.parentElement.children[0].style.textDecoration="line-through";
+    item.parentElement.parentElement.classList.toggle("rotate-vert-center");
+}
+if(item.classList[1]==="fa-edit")
+{
+  const change= prompt("edit here!");
+  if(change!="")
+  item.parentElement.parentElement.children[0].innerText=change;
+  }
+  //to change prorities
+}
+/// to filter options
+btn1.addEventListener("click",(e)=>{
+    console.log(e.target.value);
+    let todos=content.childNodes;
+    console.log(todos);
+    todos.forEach(function (todo){
+        switch(e.target.value)
+        {
+            case "all":
+                todo.style.display='flex';
+               break;
+            case "completed":
+                 {
+                     if( todo.classList.contains("rotate-vert-center"))
+                     {
+                        todo.style.display='flex';
+                     }
+                     else
+                      todo.style.display='none';
+                     break;
+                 }
+            case  "remaining":
+                {
+                    if( !todo.classList.contains("rotate-vert-center"))
+                    {
+                       todo.style.display="flex";
+                    }
+                    else
+                    todo.style.display='none';
+                    break; 
+                }
+                
+        }
+    });;
+
+});
+    </script>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Document</title>
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,500;1,100;1,200&display=swap');
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+body{
+    width:100%;
+    height:100vh;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    background-image: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1124&q=100');
+    background-position:center;
+    background-size: cover;
+}
+.main{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction:column;
+}
+.main h1{
+    color:rgba(255, 255, 255, 0.75);
+    font-size:3rem;
+    text-transform: uppercase;    
+}
+#input_text{
+    width:500px;
+    height:50px;
+    font-weight: 400;
+    backdrop-filter: blur(7px) saturate(180%);
+    -webkit-backdrop-filter: blur(7px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.75);
+    border-radius: 12px;
+    border: 1px solid rgba(209, 213, 219, 0.3);
+    padding:1rem;
+    font-size:1.4rem;
+}
+#input_text:focus{
+    outline:none;
+}
+#btn{
+    position: relative;
+    top:-9px;
+    left:8px;
+    width:50px;
+    height: 50px;
+    color:#0088cc;
+    cursor:pointer;
+    backdrop-filter: blur(7px) saturate(180%);
+    -webkit-backdrop-filter: blur(7px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(209, 213, 219, 0.3);
+   border-radius: 50%;
+}
+#btn1{
+    position: relative;
+    top:-5px;
+    left:8px;
+    width:50px;
+    height: 50px;
+    color:#0088cc;
+    cursor:pointer;
+    backdrop-filter: blur(7px) saturate(180%);
+    -webkit-backdrop-filter: blur(7px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(209, 213, 219, 0.3);
+   border-radius: 50%;
+   outline:none;
+}
+
+#btn i{
+    position: absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-60%,-50%);
+    font-size:17px;
+}
+#content{
+    width: 100%;
+    padding:2rem;
+    height:500px;
+    overflow-y: auto;
+}
+#content::-webkit-scrollbar {
+    width: .3rem;
+    color:black;
+}
+ 
+#content::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius:2rem;
+}
+ 
+#content::-webkit-scrollbar-thumb {
+    backdrop-filter: blur(7px) saturate(166%);
+    -webkit-backdrop-filter: blur(7px) saturate(166%);
+    background-color: rgba(255, 255, 255, 0.32);
+    border-radius: 12px;
+    border: 1px solid rgba(209, 213, 219, 0.3);
+  outline: 1px solid darkgrey;
+}
+.rotate-vert-center {
+	-webkit-animation: rotate-vert-center 0.7s cubic-bezier(0.455, 0.030, 0.515, 0.955) both;
+	        animation: rotate-vert-center 0.7s cubic-bezier(0.455, 0.030, 0.515, 0.955) both;
+            opacity:0.6;
+    background-color:transparent;
+    text-decoration: line-through;
+}
+@-webkit-keyframes rotate-vert-center {
+    0% {
+      -webkit-transform: rotateY(0);
+              transform: rotateY(0);
+    }
+    100% {
+      -webkit-transform: rotateY(360deg);
+              transform: rotateY(360deg);
+    }
+  }
+  @keyframes rotate-vert-center {
+    0% {
+      -webkit-transform: rotateY(0);
+              transform: rotateY(0);
+    }
+    100% {
+      -webkit-transform: rotateY(360deg);
+              transform: rotateY(360deg);
+    }
+  }
+  
+  
+.items{
+    margin:0.6rem auto;
+    padding:1rem;
+    width:80%;
+    height:fit-content;
+    display: flex;
+    align-items: center;
+    justify-content:space-between;
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.75);
+    border-radius: 12px;
+    border: 1px solid rgba(209, 213, 219, 0.3);
+    transition: all 1s ease;
+}
+.items h3{
+    color:orchid;
+    word-break:break-all;
+    width:100%;
+    cursor:pointer;
+    transition: all 0.4s ease;
+}
+
+.prop{
+    display: flex;
+    justify-content: space-evenly;
+}
+.prop i{
+    margin:0 0.4rem;
+    cursor:pointer;
+}
+.prop i:nth-of-type(4):hover
+{
+color:red;
+opacity:0.7;
+transform:scale(1.2);
+
+}
+.prop i:nth-of-type(3):hover
+{
+    color:green;
+    transform:scale(1.2);
+
+}
+.prop i:nth-of-type(1):hover,.prop i:nth-of-type(2):hover
+{
+color:#0088cc;
+opacity:0.7;
+transform:scale(1.2);
+}
+.prop i:nth-of-type(5):hover
+{
+
+transform:scale(1.2);
+}
+.slide-out-elliptic-top-bck {
+	-webkit-animation: slide-out-elliptic-top-bck 0.7s ease-in both;
+	        animation: slide-out-elliptic-top-bck 0.7s ease-in both;
+}
+@-webkit-keyframes slide-out-elliptic-top-bck {
+    0% {
+      -webkit-transform: translateY(0) rotateX(0) scale(1);
+              transform: translateY(0) rotateX(0) scale(1);
+      -webkit-transform-origin: 50% 1400px;
+              transform-origin: 50% 1400px;
+      opacity: 1;
+    }
+    100% {
+      -webkit-transform: translateY(-600px) rotateX(-30deg) scale(0);
+              transform: translateY(-600px) rotateX(-30deg) scale(0);
+      -webkit-transform-origin: 50% 100%;
+              transform-origin: 50% 100%;
+      opacity: 1;
+    }
+  }
+  @keyframes slide-out-elliptic-top-bck {
+    0% {
+      -webkit-transform: translateY(0) rotateX(0) scale(1);
+              transform: translateY(0) rotateX(0) scale(1);
+      -webkit-transform-origin: 50% 1400px;
+              transform-origin: 50% 1400px;
+      opacity: 1;
+    }
+    100% {
+      -webkit-transform: translateY(-600px) rotateX(-30deg) scale(0);
+              transform: translateY(-600px) rotateX(-30deg) scale(0);
+      -webkit-transform-origin: 50% 100%;
+              transform-origin: 50% 100%;
+      opacity: 1;
+    }
+  }
+  @media screen and (max-width:1200px)
+  {
+    #input_text{
+      width:790px;
+      
+    }
+  }
+  @media screen and (max-width:900px)
+  {
+    #input_text{
+      width:550px;
+      
+    }
+  }
+  @media screen and (max-width:670px)
+  {
+    #input_text{
+      width:320px;
+
+    }
+  }
+  @media screen and (max-width:430px)
+  {
+    #input_text{
+      width:210px;
+      
+    }
+    .prop i{
+      font-size:0.7rem;
+    }
+    .main{
+      margin:5rem 0;
+    }
+    .main h1{
+      font-size:2.5rem;
+    }
+  }
+  @media screen and (max-width:342px)
+  {
+    #input_text{
+      width:170px;
+      
+    }
+  }
+  @media screen and (max-width:312px)
+  {
+    #input_text{
+      width:130px;
+      
+    }
+  }
+  @media screen and (max-width:267px)
+  {
+    #input_text{
+      width:90px;
+      
+    }
+  }
+</style>
+<body>
+        <div class="main">
+              <h1>Todo List</h1>
+            <div  id="input">
+<input type="text" placeholder="Type here..." id="input_text" autocomplete="off" required>
+<button type="button" id="btn"><i class="far fa-paper-plane"></i></button>
+<select name="todos" class="filter-todo" id="btn1">
+    <option value="all">All</option>
+    <option value="completed">completed</option>
+    <option value="remaining">remaining</option>
+</select>
+            </div>
+            <div id="content">
+
+            </div>
+        </div>
+    <script src="app.js"></script>
+</body>
+</html>
